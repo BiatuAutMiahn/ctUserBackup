@@ -71,12 +71,15 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>$(SolutionDir)3p\wimlib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
-    <ExternalIncludePath>$(SolutionDir)3p\wimlib;$(SolutionDir)3p\wimlib\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</ExternalIncludePath>
+    <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <ExternalIncludePath>$(SolutionDir)3p\rufus\src;$(SolutionDir)3p\rufus\src\wimlib;$(SolutionDir)3p\wimlib\include\wimlib;$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ExternalIncludePath>$(SolutionDir)3p\wimlib;$(SolutionDir)3p\wimlib\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
-    <LibraryPath>$(SolutionDir)3p\clang\libs;$(SolutionDir)3p\wimlib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <ExternalIncludePath>$(SolutionDir)3p\rufus\src;$(SolutionDir)3p\rufus\src\wimlib;$(SolutionDir)3p\wimlib\include\wimlib;$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
+    <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration);$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -118,6 +121,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -135,6 +139,9 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <Optimization>MinSpace</Optimization>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

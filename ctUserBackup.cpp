@@ -10,24 +10,63 @@
 #include <iomanip>
 #include <filesystem>
 #include <thread> 
-#include <algorithm>6
+#include <algorithm>
 #include <Shlobj.h>
 
+extern "C" int __cdecl wuprintf(const wchar_t* fmt,...){
+    // super-basic fallback: just forward to vfwprintf(stdout, ...)
+    va_list ap;
+    va_start(ap,fmt);
+    int r=vfwprintf(stdout,fmt,ap);
+    va_end(ap);
+    return r;
+}
+
+
 extern "C" {
-#ifdef _DEBUG
-#include "devel/wimlib.h"
-#pragma comment(lib, "devel/libwim.lib")
+    // If you have cdio headers available, include them.
+    // Otherwise, keep the minimal forward decls below.
+#if __has_include(<cdio/cdio.h>)
+#  include <cdio/cdio.h>
 #else
-#include "wimlib.h"
+    struct CdIo;            // opaque type
+    typedef CdIo CdIo_t;
+    typedef int driver_id_t;
 #endif
 }
 
+// Provide no-op stubs (same signatures)
+extern "C" {
+    CdIo_t* cdio_open(const char* /*psz_source*/,driver_id_t /*driver_id*/){
+        return nullptr;
+    }
+    void cdio_destroy(CdIo_t* /*p_cdio*/){
+        // no-op
+    }
+}
+
+extern "C" {
+#include "wimlib.h"
+#pragma comment(lib, "wimlib.lib")
+#pragma comment(lib, "libcdio-udf.lib")
+#pragma comment(lib, "libcdio-iso9660.lib")
+#pragma comment(lib, "libcdio-driver.lib")
+
+//#include ""
+//#ifdef _DEBUG
+//#include "devel/wimlib.h"
+//#else
+//#include "wimlib.h"
+//#endif
+}
+
+
 #ifndef _DEBUG
-#pragma comment(lib, "libs/static_x86_64/libwim.lib")
-#pragma comment(lib,"libmingwex.a")
-#pragma comment(lib,"libmingw32.a")
-#pragma comment(lib,"libmsvcrt.a")
-#pragma comment(lib,"libclang_rt.builtins-x86_64.a")
+//#pragma comment(lib, "libs/static_x86_64/libwim.lib")
+//#pragma comment(lib,"libmingwex.a")
+//#pragma comment(lib,"libmingw32.a")
+//#pragma comment(lib,"libmsvcrt.a")
+//#pragma comment(lib,"libclang_rt.builtins-x86_64.a")
 #endif
 
 #pragma comment(lib, "Shell32.lib")
@@ -35,6 +74,7 @@ extern "C" {
 #pragma comment(lib, "User32.lib")
 #pragma comment(lib, "version.lib")
 #pragma comment(lib, "ntdll.lib")
+
 
 // --- Global C++ Variables ---
 static FILE* imagex_info_file;
@@ -158,13 +198,7 @@ std::vector<std::wstring> g_aExclFlt={
     L"IconCache\\.db$",
     L"bing\\.url$",
     L"desktop\\.ini$",
-    L"\\.igpi$",
-    L"\\.regtrans-ms$",
-    L"\\.search-ms$",
-    L"\\.searchconnector-ms$",
-    L"\\.LOG1$",
-    L"\\.LOG2$",
-    L"\\.blf$"
+    L"\\.igpi$"
 };
 
 //std::vector<std::wregex> g_reSysFrags;
