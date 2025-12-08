@@ -14,7 +14,6 @@
 #include <Shlobj.h>
 
 extern "C" int __cdecl wuprintf(const wchar_t* fmt,...){
-    // super-basic fallback: just forward to vfwprintf(stdout, ...)
     va_list ap;
     va_start(ap,fmt);
     int r=vfwprintf(stdout,fmt,ap);
@@ -22,20 +21,17 @@ extern "C" int __cdecl wuprintf(const wchar_t* fmt,...){
     return r;
 }
 
-
+// cdio libs are not actually used, it's included only to satisfy rufus' wimlib needs without modification.
 extern "C" {
-    // If you have cdio headers available, include them.
-    // Otherwise, keep the minimal forward decls below.
 #if __has_include(<cdio/cdio.h>)
 #  include <cdio/cdio.h>
 #else
-    struct CdIo;            // opaque type
+    struct CdIo;
     typedef CdIo CdIo_t;
     typedef int driver_id_t;
 #endif
 }
 
-// Provide no-op stubs (same signatures)
 extern "C" {
     CdIo_t* cdio_open(const char* /*psz_source*/,driver_id_t /*driver_id*/){
         return nullptr;
@@ -48,26 +44,11 @@ extern "C" {
 extern "C" {
 #include "wimlib.h"
 #pragma comment(lib, "wimlib.lib")
+// cdio libs are not actually used, it's included only to satisfy rufus' wimlib needs without modification.
 #pragma comment(lib, "libcdio-udf.lib")
 #pragma comment(lib, "libcdio-iso9660.lib")
 #pragma comment(lib, "libcdio-driver.lib")
-
-//#include ""
-//#ifdef _DEBUG
-//#include "devel/wimlib.h"
-//#else
-//#include "wimlib.h"
-//#endif
 }
-
-
-#ifndef _DEBUG
-//#pragma comment(lib, "libs/static_x86_64/libwim.lib")
-//#pragma comment(lib,"libmingwex.a")
-//#pragma comment(lib,"libmingw32.a")
-//#pragma comment(lib,"libmsvcrt.a")
-//#pragma comment(lib,"libclang_rt.builtins-x86_64.a")
-#endif
 
 #pragma comment(lib, "Shell32.lib")
 #pragma comment(lib, "Kernel32.lib")
